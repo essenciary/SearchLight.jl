@@ -19,7 +19,7 @@
     using SearchLight
 
     conn_info = SearchLight.Configuration.load("mysql_connection.yml")
-    conn = SearchLight.connect()
+    conn = SearchLight.connect(conn_info)
 
     @test conn.host == "127.0.0.1"
     @test conn.port == "3306"
@@ -29,12 +29,14 @@
 
   @safetestset "MySQL query" begin
     using SearchLight
+    using SearchLightMySQL
 
     conn_info = SearchLight.Configuration.load("mysql_connection.yml")
     conn = SearchLight.connect()
 
-    @test isempty(SearchLight.query("SHOW TABLES")) == true
+    @test isempty(SearchLight.query("SHOW TABLES",conn)) == true
     @test SearchLight.Migration.create_migrations_table() == true
-    @test Array(SearchLight.query("SHOW TABLES"))[1] == SearchLight.config.db_migrations_table_name
+    @test Array(SearchLight.query("SHOW TABLES",conn))[1] == SearchLight.config.db_migrations_table_name
   end;
+
 end

@@ -11,3 +11,4 @@ dev:
   config:
     log_queries: true
     log_level: :debug
+    

@@ -449,7 +449,7 @@ const drop_sequence = remove_sequence
 
 function create_migrations_table end
 
-function drop_migration_table end
+function drop_migrations_table end
 
 end
 

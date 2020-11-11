@@ -6,10 +6,6 @@ using SearchLight
 export Book
 
 mutable struct Book <: AbstractModel
-  ### INTERNALS
-  _table_name::String
-  _id::String
-  _serializable::Vector{Symbol}
 
   ### FIELDS
   id::DbId

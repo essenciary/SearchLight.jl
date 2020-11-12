@@ -36,6 +36,28 @@ function new_table_migration(module_name::String, resource::String) :: String
   """
 end
 
+function new_table_migration(module_name::String, namesAndTypes::String ,resource::String)::String
+  """
+  module $module_name
+
+  import SearchLight.Migrations: create_table, column, primary_key, add_index, drop_table
+
+  function up()
+    create_table(:$resource) do
+      [
+        $namesAndTypes
+      ]
+    end
+  end
+
+  function down()
+    drop_table(:$resource)
+  end
+
+  end
+  """
+end
+
 
 function newmigration(module_name::String) :: String
   """

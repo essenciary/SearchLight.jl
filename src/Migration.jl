@@ -52,6 +52,33 @@ function new_table(migration_name::String, resource::String) :: Nothing
   nothing
 end
 
+function new_table(migration_name::String , modelType::DataType , resource::String)
+  mfn = migration_file_name(migration_name)
+
+  ispath(mfn) && throw(ExistingMigrationException(migration_name))
+  ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
+
+  fieldNames = fieldnames(modelType)
+  types = fieldtypes(modelType)
+  indexesWithoutUnderscors = findall( x -> SubString(string(x),1,1) != "_" , fieldNames)
+  namesAndTypes = ""
+  for i in indexesWithoutUnderscors
+    if types[i] != SearchLight.DbId
+      namesAndTypes = string(namesAndTypes , ":",fieldNames[i] , "  ,:",types[i], "\r\n")
+    elseif types[i] == SearchLight.DbId
+      namesAndTypes = string(namesAndTypes, "primary_key() \r\n")
+    end
+  end
+
+  open(mfn, "w") do f
+    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypes , resource))
+  end
+
+  @info "New table migration created at $(abspath(mfn))"
+
+  nothing
+end
+
 const newtable = new_table
 
 

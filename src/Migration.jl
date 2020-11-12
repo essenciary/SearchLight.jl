@@ -64,7 +64,7 @@ function new_table(migration_name::String , modelType::DataType , resource::Stri
   namesAndTypes = ""
   for i in indexesWithoutUnderscors
     if types[i] != SearchLight.DbId
-      namesAndTypes = string(namesAndTypes , "column(:",fieldNames[i] , "  ,:",types[i],")", "\r\n")
+      namesAndTypes = string(namesAndTypes , "column(:",fieldNames[i] , "  ,:",lowercase(types[i]),")", "\r\n")
     elseif types[i] == SearchLight.DbId
       namesAndTypes = string(namesAndTypes, "primary_key() \r\n")
     end

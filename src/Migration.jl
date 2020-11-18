@@ -57,7 +57,6 @@ function namesAndTypes(modelType::Type{T}) where {T<:SearchLight.AbstractModel}
   fieldNames = fieldnames(modelType)
   types = fieldtypes(modelType)
   indexesWithoutUnderscors = findall( x -> SubString(string(x),1,1) != "_" , fieldNames)
-
   namesAndTypes = ""
   for i in indexesWithoutUnderscors
     if types[i] != SearchLight.DbId

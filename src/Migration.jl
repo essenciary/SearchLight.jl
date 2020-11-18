@@ -52,15 +52,12 @@ function new_table(migration_name::String, resource::String) :: Nothing
   nothing
 end
 
-function new_table(migration_name::String , modelType::DataType , resource::String)
-  mfn = migration_file_name(migration_name)
-
-  ispath(mfn) && throw(ExistingMigrationException(migration_name))
-  ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
+function namesAndTypes(modelType::Type{T}) where {T<:SearchLight.AbstractModel}
 
   fieldNames = fieldnames(modelType)
   types = fieldtypes(modelType)
   indexesWithoutUnderscors = findall( x -> SubString(string(x),1,1) != "_" , fieldNames)
+
   namesAndTypes = ""
   for i in indexesWithoutUnderscors
     if types[i] != SearchLight.DbId
@@ -69,6 +66,19 @@ function new_table(migration_name::String , modelType::DataType , resource::Stri
       namesAndTypes = string(namesAndTypes, "primary_key() \r\n")
     end
   end
+
+  return namesAndTypes
+  
+end
+
+function new_table(migration_name::String , modelType::Type{T} , resource::String) where {T<:SearchLight.AbstractModel}
+  mfn = migration_file_name(migration_name)
+
+  ispath(mfn) && throw(ExistingMigrationException(migration_name))
+  ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
+
+  
+  namesAndTypes = namesAndTypes(modelTye)
 
   open(mfn, "w") do f
     write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypes , resource))

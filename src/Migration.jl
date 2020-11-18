@@ -78,7 +78,7 @@ function new_table(migration_name::String , modelType::Type{T} , resource::Strin
   ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
 
   
-  namesAndTypes = namesAndTypes(modelTye)
+  namesAndTypes = namesAndTypes(modelType)
 
   open(mfn, "w") do f
     write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypes , resource))

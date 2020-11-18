@@ -78,10 +78,10 @@ function new_table(migration_name::String , modelType::Type{T} , resource::Strin
   ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
 
   
-  namesAndTypesString = namesAndTypes(modelType)
+  namesAndTypesStringOfTypes = namesAndTypes(modelType)
 
   open(mfn, "w") do f
-    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypesString , resource))
+    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypesStringOfTypes , resource))
   end
 
   @info "New table migration created at $(abspath(mfn))"

@@ -139,6 +139,20 @@ end
 
 # TODO: max(), min(), avg(), mean(), etc
 
+function save(m::T; conflict_strategy = :error, skip_validation = false, skip_callbacks = Vector{Symbol}())::Bool where {T<:Array{A}} where{A<:AbstractModel}
+  
+  for Item in m  
+    try
+      _save!!(Item, conflict_strategy = conflict_strategy, skip_validation = skip_validation, skip_callbacks = skip_callbacks)
+    catch ex
+      @error ex
+
+      false
+    end
+  end 
+
+  return true 
+end
 
 function save(m::T; conflict_strategy = :error, skip_validation = false, skip_callbacks = Vector{Symbol}())::Bool where {T<:AbstractModel}
   try

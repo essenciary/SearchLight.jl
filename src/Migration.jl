@@ -52,21 +52,21 @@ function new_table(migration_name::String, resource::String) :: Nothing
   nothing
 end
 
-function namesAndTypes(modelType::Type{T}) where {T<:SearchLight.AbstractModel}
+function names_and_types(modelType::Type{T}) where {T<:SearchLight.AbstractModel}
 
   fieldNames = fieldnames(modelType)
   types = fieldtypes(modelType)
   indexesWithoutUnderscors = findall( x -> SubString(string(x),1,1) != "_" , fieldNames)
-  namesAndTypes = ""
+  names_and_types = ""
   for i in indexesWithoutUnderscors
     if types[i] != SearchLight.DbId
-      namesAndTypes = string(namesAndTypes , "column(:",fieldNames[i] , "  ,:",lowercase(string(types[i])),")", "\r\n")
+      names_and_types = string(names_and_types , "column(:",fieldNames[i] , "  ,:",lowercase(string(types[i])),")", "\r\n")
     elseif types[i] == SearchLight.DbId
-      namesAndTypes = string(namesAndTypes, "primary_key() \r\n")
+      names_and_types = string(namesAndTypes, "primary_key() \r\n")
     end
   end
 
-  return namesAndTypes
+  return names_and_types
   
 end
 
@@ -77,10 +77,10 @@ function new_table(migration_name::String , modelType::Type{T} , resource::Strin
   ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
 
   
-  namesAndTypesStringOfTypes = namesAndTypes(modelType)
+  names_and_typesString_of_types = names_and_types(modelType)
 
   open(mfn, "w") do f
-    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), namesAndTypesStringOfTypes , resource))
+    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), names_and_typesString_of_types , resource))
   end
 
   @info "New table migration created at $(abspath(mfn))"

@@ -62,12 +62,11 @@ function names_and_types(modelType::Type{T}) where {T<:SearchLight.AbstractModel
     if types[i] != SearchLight.DbId
       names_and_types = string(names_and_types , "column(:",fieldNames[i] , "  ,:",lowercase(string(types[i])),")", "\r\n")
     elseif types[i] == SearchLight.DbId
-      names_and_types = string(namesAndTypes, "primary_key() \r\n")
+      names_and_types = string(names_and_types, "primary_key() \r\n")
     end
   end
 
   return names_and_types
-  
 end
 
 function new_table(migration_name::String , modelType::Type{T} , resource::String) where {T<:SearchLight.AbstractModel}

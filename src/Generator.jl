@@ -72,6 +72,18 @@ function new_table_migration(migration_name::Union{String,Symbol}; pluralize::Bo
   nothing
 end
 
+function new_table_migration( modelType::Type{T}; pluralize::Bool = true):: Nothing where {T<:SearchLight.AbstractModel} 
+  resource_name = uppercasefirst(string(modelType))
+
+  SearchLight.Inflector.is_singular(resource_name) && pluralize &&
+    (resource_name = SearchLight.Inflector.to_plural(resource_name))
+
+  migration_name = "create_table_" * lowercase(resource_name)
+  SearchLight.Migration.new_table(migration_name, modelType , lowercase(resource_name))
+
+  nothing
+end
+
 
 function newmigration(migration_name::Union{String,Symbol}) :: Nothing
   migration_name = replace(uppercasefirst(string(migration_name)) |> lowercase, " "=>"_")

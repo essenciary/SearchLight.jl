@@ -1,14 +1,13 @@
 env: dev
 
 dev:
-  adapter:  MySQL
+  adapter:  PostgreSQL
   host:     127.0.0.1
-  port:     3306
+  port:     5432
   database: searchlight_tests
-  username: root
-  password: root
+  username: postgres
+  password: postgres
 
   config:
     log_queries: true
     log_level: :debug
-    

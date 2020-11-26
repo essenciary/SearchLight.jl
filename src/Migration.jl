@@ -52,6 +52,41 @@ function new_table(migration_name::String, resource::String) :: Nothing
   nothing
 end
 
+function names_and_types(modelType::Type{T}) where {T<:SearchLight.AbstractModel}
+
+  fieldNames = fieldnames(modelType)
+  types = fieldtypes(modelType)
+  indexesWithoutUnderscors = findall( x -> SubString(string(x),1,1) != "_" , fieldNames)
+  names_and_types = ""
+  for i in indexesWithoutUnderscors
+    if types[i] != SearchLight.DbId
+      names_and_types = string(names_and_types , "column(:",fieldNames[i] , "  ,:",lowercase(string(types[i])),")", "\r\n")
+    elseif types[i] == SearchLight.DbId
+      names_and_types = string(names_and_types, "primary_key() \r\n")
+    end
+  end
+
+  return names_and_types
+end
+
+function new_table(migration_name::String , modelType::Type{T} , resource::String) where {T<:SearchLight.AbstractModel}
+  mfn = migration_file_name(migration_name)
+
+  ispath(mfn) && throw(ExistingMigrationException(migration_name))
+  ispath(SearchLight.config.db_migrations_folder) || mkpath(SearchLight.config.db_migrations_folder)
+
+  
+  names_and_typesString_of_types = names_and_types(modelType)
+
+  open(mfn, "w") do f
+    write(f, SearchLight.Generator.FileTemplates.new_table_migration(migration_module_name(migration_name), names_and_typesString_of_types , resource))
+  end
+
+  @info "New table migration created at $(abspath(mfn))"
+
+  nothing
+end
+
 const newtable = new_table
 
 
@@ -448,6 +483,8 @@ const drop_sequence = remove_sequence
 
 
 function create_migrations_table end
+
+function drop_migrations_table end
 
 end
 
